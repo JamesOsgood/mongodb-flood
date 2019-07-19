@@ -1,6 +1,5 @@
 # Import base test
 from pysys.basetest import BaseTest
-from FloodMonitoringDataHelper import FloodMonitoringDataHelper
 from datetime import datetime
 import codecs
 import csv
@@ -12,7 +11,7 @@ class DataImporterBaseTest(BaseTest):
 
 		# Batching
 		self.batch = []
-		self.BATCH_COUNT = 1000
+		self.BATCH_COUNT = 100
 		self.total_written = 0
 
 	# Create indexes
@@ -24,9 +23,18 @@ class DataImporterBaseTest(BaseTest):
 		collection.create_index('group.hours')
 		collection.create_index('group.days')
 
+	def insert_batch(self, items, collection):
+		count = 0
+		for item in items:
+			self.batch.append(item)
+			count += 1
+			if len(self.batch) == self.BATCH_COUNT:
+				collection.insert_many(self.batch)
+				self.batch = []
+				self.log.info(f'Batch: Inserted {count}')
+		if len(self.batch) > 0:
+			collection.insert_many(self.batch)
+			self.log.info(f'Batch: Inserted {count}')
 
-	def getLatestReadings(self, log_messages=True):
-		helper = FloodMonitoringDataHelper(self)
-		return helper.getLatestReadings(log_messages)
-
+		
 

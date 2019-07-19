@@ -24,6 +24,21 @@ class FloodMonitoringDataHelper(object):
 		results = self.doRequestGet("%s/data/readings?latest" % self.api_base, log_messages)
 		return results
 
+	def getAllReadings(self, station, log_messages=False):
+		results = self.doRequestGet("%s/data/readings?stationReference=%s" % (self.api_base, station), log_messages)
+		return results
+
+	def getAllStations(self, station, log_messages=False):
+		stations = self.doRequestGet("%s/id/stations" % self.api_base, log_messages)
+		return stations
+
+	def getAllMeasures(self, log_messages=False):
+		measures = self.doRequestGet("%s/id/measures" % self.api_base, log_messages)
+		return measures
+
+	def getMeasureDetails(self, url):
+		return self.doRequestGet(url)
+
 	def formatDateISO8601(self, date):
 		return datetime.strftime(date, '%Y-%m-%dT%H:%M:%SZ')
 
