@@ -28,12 +28,16 @@ class FloodMonitoringDataHelper(object):
 		results = self.doRequestGet("%s/data/readings?stationReference=%s" % (self.api_base, station), log_messages)
 		return results
 
-	def getAllStations(self, station, log_messages=False):
+	def getAllStations(self, log_messages=False):
 		stations = self.doRequestGet("%s/id/stations" % self.api_base, log_messages)
 		return stations
 
 	def getAllMeasures(self, log_messages=False):
-		measures = self.doRequestGet("%s/id/measures" % self.api_base, log_messages)
+		result = self.doRequestGet("%s/id/measures" % self.api_base, log_messages)
+		measures = {}
+		for item in result['items']:
+			measures[item['@id']] = item
+		
 		return measures
 
 	def getMeasureDetails(self, url):

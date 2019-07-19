@@ -14,14 +14,21 @@ class PySysTest(DataImporterBaseTest):
 
 		conn_str = self.project.MONGODB_CONNECTION_STRING_ATLAS.replace("~", "=")
 		client = MongoClient(conn_str)
-		db = client.get_database('latest')
+		db = client.get_database('data')
 
 		helper = FloodMonitoringDataHelper(self)
 
+		measures = helper.getAllMeasures()
 		data = helper.getLatestReadings()
 		items = data['items']
-		db.data.drop()
-		self.insert_batch(items, db.data)
+		processed_items = []
+		for item in items:
+			measure = item['measure']
+			item['stationReference'] = measures[measure]['stationReference']
+			processed_items.append(item)
+
+		db.latest.drop()
+		self.insert_batch(processed_items, db.latest)
 
 	def validate(self):
 		pass

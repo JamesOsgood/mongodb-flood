@@ -17,7 +17,7 @@ class PySysTest(DataImporterBaseTest):
 		db = client.get_database('ref')
 
 		helper = FloodMonitoringDataHelper(self)
-		measures = self.getAllMeasures(helper)
+		measures = helper.getAllMeasures()
 		data = helper.getAllStations()
 
 		enriched_count = 0
@@ -47,17 +47,6 @@ class PySysTest(DataImporterBaseTest):
 
 		db.stations.drop()
 		self.insert_batch(processed_items, db.stations)
-
-
-	def getAllMeasures(self, helper):
-		results = helper.getAllMeasures()
-		measures = {}
-		for item in results['items']:
-			id = item['@id']
-			measures[id] = item
-
-		return measures
-		
 
 	def validate(self):
 		pass
